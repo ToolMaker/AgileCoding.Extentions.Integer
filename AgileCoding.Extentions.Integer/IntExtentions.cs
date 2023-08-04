@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AgileCoding.Extentions.Activators;
+﻿using AgileCoding.Extentions.Activators;
 
 namespace AgileCoding.Extentions.Integers
 {
@@ -17,7 +11,7 @@ namespace AgileCoding.Extentions.Integers
             return tempIntValue;
         }
 
-        public static int ToInt<IExceptionType>(this string stringValue, string errorMessage = null)
+        public static int ToInt<IExceptionType>(this string stringValue, string? errorMessage = null)
              where IExceptionType : Exception, new()
         {
             string tempErrorMessage = errorMessage == null
@@ -27,7 +21,15 @@ namespace AgileCoding.Extentions.Integers
             int tempIntValue = 0;
             if(!int.TryParse(stringValue, out tempIntValue))
             {
-                throw typeof(IExceptionType).CreateInstanceWithoutLogging<IExceptionType>(tempErrorMessage);
+                var exception = typeof(IExceptionType).CreateInstanceWithoutLogging<IExceptionType>(tempErrorMessage);
+                if (exception != null)
+                {
+                    throw exception;
+                }
+                else
+                {
+                    throw new Exception(tempErrorMessage);
+                }
             }
 
             return tempIntValue;
@@ -38,7 +40,15 @@ namespace AgileCoding.Extentions.Integers
         {
             if (expression)
             {
-                throw typeof(TExceptionType).CreateInstanceWithoutLogging<TExceptionType>(errorMessage);
+                var exception = typeof(TExceptionType).CreateInstanceWithoutLogging<TExceptionType>(errorMessage);
+                if (exception != null)
+                {
+                    throw exception;
+                }
+                else
+                {
+                    throw new Exception(errorMessage);
+                }
             }
 
             return self;
